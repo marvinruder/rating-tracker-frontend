@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn install --development
+RUN yarn install
 COPY . .
 RUN yarn run test
 
