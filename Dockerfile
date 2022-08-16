@@ -11,6 +11,8 @@ COPY . .
 RUN yarn run test
 
 RUN yarn install --production
-COPY . .
-
 RUN yarn build
+
+RUN yarn global add serve
+
+CMD ["serve", "-s", "build"]
