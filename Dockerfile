@@ -1,4 +1,4 @@
-FROM node:current-alpine AS builder
+FROM node:current-alpine
 ENV DISABLE_ESLINT_PLUGIN true
 
 WORKDIR /app

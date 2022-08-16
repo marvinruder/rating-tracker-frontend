@@ -37,7 +37,6 @@
     "eject": "react-scripts eject",
     "lint": "eslint --ext .jsx,.js,.tsx,.ts src/",
     "lint:fix": "eslint --ext .jsx,.js,.tsx,.ts src/ --fix",
-    "dev": "docker compose -f docker-compose.dev.yml up",
     "test:watch": "jest --watchAll",
     "test": "jest"
   },
