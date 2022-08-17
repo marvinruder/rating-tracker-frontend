@@ -37,8 +37,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint --ext .jsx,.js,.tsx,.ts src/",
     "lint:fix": "eslint --ext .jsx,.js,.tsx,.ts src/ --fix",
-    "test:watch": "jest --watchAll",
-    "test": "jest"
+    "test": "jest --watchAll",
+    "test:ci": "jest --ci"
   },
   "browserslist": {
     "production": [

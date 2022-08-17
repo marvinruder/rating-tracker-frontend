@@ -8,7 +8,7 @@ COPY yarn.lock .
 
 RUN yarn install
 COPY . .
-RUN yarn run test
+RUN yarn run test:ci
 
 RUN yarn install --production
 RUN yarn build
