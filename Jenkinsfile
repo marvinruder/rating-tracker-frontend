@@ -1,7 +1,4 @@
 pipeline {
-    tools {
-        nodejs 'default-nodejs'
-    }
     agent any
     stages {
         stage('Test') {
@@ -14,6 +11,9 @@ pipeline {
         }
         stage('Build') {
             agent { dockerfile true }
+            steps {
+                sh 'docker ps'
+            }
         }
     }
 }
