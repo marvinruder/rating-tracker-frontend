@@ -11,18 +11,9 @@ pipeline {
             }
         }
         stage('Build') {
+            agent { dockerfile true }
             steps {
-                script {
-                    sh 'yarn install --production'
-                    sh 'yarn build'
-                }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                script {
-                    sh 'echo ${GIT_BRANCH}'
-                }
+                sh 'echo Build successful'
             }
         }
     }
