@@ -1,10 +1,19 @@
 pipeline {
-    agent { dockerfile true }
+    tools {
+        nodejs 'default-nodejs'
+    }
+    agent any
     stages {
         stage('Test') {
             steps {
-                sh 'echo It works!'
+                script {
+                    sh 'yarn install'
+                    sh 'yarn test:ci'
+                }
             }
+        }
+        stage('Build') {
+            agent { dockerfile true }
         }
     }
 }

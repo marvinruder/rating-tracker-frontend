@@ -17,6 +17,7 @@
     "@types/jest": "^28.1.7",
     "@types/react": "^17.0.48",
     "@types/react-dom": "^17.0.17",
+    "@vitejs/plugin-react": "^2.0.1",
     "apexcharts": "^3.35.3",
     "clsx": "^1.1.1",
     "date-fns": "^2.28.0",
@@ -29,12 +30,14 @@
     "react-dom": "^17.0.2",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
-    "react-scripts": "^5.0.1"
+    "vite": "^3.0.8",
+    "vite-plugin-svgr": "^2.2.1",
+    "vite-tsconfig-paths": "^3.5.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "eject": "react-scripts eject",
+    "start": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
     "lint": "eslint --ext .jsx,.js,.tsx,.ts src/",
     "lint:fix": "eslint --ext .jsx,.js,.tsx,.ts src/ --fix",
     "test": "jest --watchAll",
