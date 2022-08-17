@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             agent { dockerfile true }
             steps {
-                sh 'echo Build successful'
+                sh 'printenv'
             }
         }
     }
