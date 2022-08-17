@@ -18,5 +18,12 @@ pipeline {
                 }
             }
         }
+        stage('Deploy') {
+            steps {
+                script {
+                    sh 'echo ${GIT_BRANCH}'
+                }
+            }
+        }
     }
 }
