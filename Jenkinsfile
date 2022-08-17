@@ -13,7 +13,7 @@ pipeline {
         stage('Build') {
             agent { dockerfile true }
             steps {
-                sh 'docker ps'
+                sh 'echo Build successful'
             }
         }
     }
