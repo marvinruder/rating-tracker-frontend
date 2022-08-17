@@ -11,12 +11,11 @@ pipeline {
             }
         }
         stage('Build') {
+            agent { dockerfile true }
             steps {
-                script {
-                    sh 'yarn install --production'
-                    sh 'yarn build'
-                }
+                sh 'docker ps'
+                sh 'echo Build successful'
             }
-        }
-    }
+         }
+     }
 }
