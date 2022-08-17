@@ -3,13 +3,7 @@ ENV NODE_ENV production
 
 WORKDIR /app
 
-COPY package.json .
-COPY yarn.lock .
-
-RUN yarn install --production
-
 COPY . .
-
-RUN yarn build
+RUN yarn install --production && yarn build && rm -r node_modules
 
 CMD ["yarn", "serve"]
