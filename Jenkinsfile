@@ -1,9 +1,12 @@
 node {
+    tools { nodejs "NodeJS" }
+
     stage('Clone repository') {
         checkout scm
     }
 
     stage ('Run Tests') {
+        sh 'npm install -g yarn'
         sh 'yarn install'
         sh 'yarn test:ci'
     }
