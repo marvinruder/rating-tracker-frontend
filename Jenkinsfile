@@ -1,9 +1,9 @@
 node {
-    withEnv(
+    withEnv([
         'imagename="marvinruder/rating-tracker-frontend"',
         'main_tag=latest',
         'branch_tag=SNAPSHOT'
-    ) {
+    ]) {
 
         stage('Clone repository') {
             checkout scm
