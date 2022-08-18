@@ -5,6 +5,6 @@ WORKDIR /app
 
 COPY . .
 RUN yarn install --production && yarn build && rm -r node_modules && yarn cache clean --all
-RUN yarn global add vite
+RUN yarn global add serve
 
 CMD ["yarn", "serve"]
