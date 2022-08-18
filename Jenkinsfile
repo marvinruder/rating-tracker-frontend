@@ -13,7 +13,7 @@ node {
     def image
 
     stage ('Build Docker Image') {
-        def image = docker.build("marvinruder/rating-tracker-frontend:build${env.BUILD_ID}")
+        image = docker.build("marvinruder/rating-tracker-frontend:build${env.BUILD_ID}")
     }
 
     stage ('Publish Docker Image') {
