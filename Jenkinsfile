@@ -19,7 +19,7 @@ node {
         def image
 
         stage ('Build Docker Image') {
-            image = docker.build("$imagename:build${env.BUILD_ID}")
+            image = docker.build("$imagename:build-${env.BUILD_ID}")
         }
 
         stage ('Publish Docker Image') {
@@ -33,7 +33,7 @@ node {
         }
 
         stage ('Cleanup') {
-            sh "docker rmi $imagename:${env.BUILD_ID}"
+            sh "docker rmi $imagename:build-${env.BUILD_ID}"
             if (env.BRANCH_NAME == 'origin/main') {
                 sh "docker rmi $imagename:$main_tag"
             } else {
