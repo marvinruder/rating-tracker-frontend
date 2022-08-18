@@ -1,6 +1,6 @@
 node {
     withEnv([
-        'imagename="marvinruder/rating-tracker-frontend"',
+        'imagename=marvinruder/rating-tracker-frontend',
         'main_tag=latest',
         'branch_tag=SNAPSHOT'
     ]) {
