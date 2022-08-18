@@ -18,11 +18,11 @@ node {
     }
 
     stage ('Build Docker Image') {
-        image = docker.build(imagename + ":build${env.BUILD_ID}")
+        image = docker.build("$imagename:build${env.BUILD_ID}")
     }
 
     stage ('Publish Docker Image') {
-        docker.withRegistry( '', 'dockerhub' ) {
+        docker.withRegistry('', 'dockerhub') {
             if (env.BRANCH_NAME == 'origin/main') {
                 image.push(main_tag)
             } else {
