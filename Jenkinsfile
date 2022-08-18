@@ -1,14 +1,13 @@
 node {
-    tools { nodejs "NodeJS" }
-
     stage('Clone repository') {
         checkout scm
     }
 
     stage ('Run Tests') {
-        sh 'npm install -g yarn'
-        sh 'yarn install'
-        sh 'yarn test:ci'
+        nodejs(nodeJSInstallationName: 'NodeJS') {
+            sh 'yarn install'
+            sh 'yarn test:ci'
+        }
     }
 
     stage ('Build Docker Image') {
