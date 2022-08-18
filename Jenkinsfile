@@ -1,4 +1,11 @@
 node {
+    environment {
+        def image
+        imagename = "marvinruder/rating-tracker-frontend"
+        main_tag = "latest"
+        branch_tag = "SNAPSHOT"
+    }
+
     stage('Clone repository') {
         checkout scm
     }
@@ -10,17 +17,26 @@ node {
         }
     }
 
-    def image
-
     stage ('Build Docker Image') {
-        image = docker.build("marvinruder/rating-tracker-frontend:build${env.BUILD_ID}")
+        image = docker.build(imagename + ":build${env.BUILD_ID}")
     }
 
     stage ('Publish Docker Image') {
+        docker.withRegistry( '', 'dockerhub' ) {
+            if (env.BRANCH_NAME == 'origin/main') {
+                image.push(main_tag)
+            } else {
+                image.push(branch_tag)
+            }
+        }
+    }
+
+    stage ('Cleanup') {
+        sh "docker rmi $imagename:${env.BUILD_ID}"
         if (env.BRANCH_NAME == 'origin/main') {
-            image.push("latest")
+            sh "docker rmi $imagename:$main_tag"
         } else {
-            image.push("SNAPSHOT")
+            sh "docker rmi $imagename:$branch_tag"
         }
     }
 }
