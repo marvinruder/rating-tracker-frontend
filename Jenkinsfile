@@ -20,6 +20,7 @@ node {
 
         stage ('Print environment') {
             sh 'printenv'
+            sh 'Hello'
         }
 
         stage ('Build Docker Image') {
