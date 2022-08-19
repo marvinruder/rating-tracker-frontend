@@ -19,7 +19,7 @@ node {
         def image
 
         stage ('Build Docker Image') {
-            image = docker.build("$imagename:build-${env.GIT_COMMIT}")
+            image = docker.build("$imagename:build-${GIT_REVISION}-${GIT_COMMIT}-${env.GIT_REVISION}")
         }
 
         stage ('Publish Docker Image') {
@@ -33,11 +33,11 @@ node {
         }
 
         stage ('Cleanup') {
-            sh "docker rmi $imagename:build-${env.GIT_COMMIT}"
+            sh "docker rmi $imagename:build-${GIT_REVISION}-${GIT_COMMIT}-${env.GIT_REVISION} || true"
             if (env.BRANCH_NAME == 'origin/main') {
-                sh "docker rmi $imagename:$main_tag"
+                sh "docker rmi $imagename:$main_tag || true"
             } else {
-                sh "docker rmi $imagename:$branch_tag"
+                sh "docker rmi $imagename:$branch_tag || true"
             }
         }
     }
