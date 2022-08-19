@@ -18,6 +18,10 @@ node {
 
         def image
 
+        stage ('Print environment') {
+            sh 'printenv'
+        }
+
         stage ('Build Docker Image') {
             image = docker.build("$imagename:build-${env.GIT_REVISION}")
         }
