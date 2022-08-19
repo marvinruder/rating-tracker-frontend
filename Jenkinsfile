@@ -19,7 +19,7 @@ node {
         def image
 
         stage ('Build Docker Image') {
-            image = docker.build("$imagename:build-${GIT_COMMIT}-${env.GIT_REVISION}")
+            image = docker.build("$imagename:build-${env.GIT_REVISION}")
         }
 
         stage ('Publish Docker Image') {
