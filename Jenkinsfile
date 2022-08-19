@@ -26,6 +26,7 @@ node {
         }
 
         stage ('Publish Docker Image') {
+            sh "echo ${env.BRANCH_NAME}"
             docker.withRegistry('', 'dockerhub') {
                 if (env.BRANCH_NAME == 'main') {
                     image.push(main_tag)
