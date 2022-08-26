@@ -19,6 +19,7 @@ RUN yarn build
 
 FROM node:16-alpine as run
 
+COPY --from=build /app/package.json /package.json
 COPY --from=build /app/dist /dist
 
 CMD ["yarn", "serve"]
