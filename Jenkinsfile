@@ -12,8 +12,14 @@ node {
             GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
         }
 
+        stage('Create yarn caches') {
+            nodejs(nodeJSInstallationName: 'node16') {
+                sh 'yarn install'
+            }
+        }
+
         stage ('Run Tests') {
-            docker.build("$imagename:build-$GIT_COMMIT_HASH", "--target test .")
+            docker.build("--target test .")
         }
 
         def image
