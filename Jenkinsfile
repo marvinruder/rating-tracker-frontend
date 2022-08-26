@@ -13,10 +13,7 @@ node {
         }
 
         stage ('Run Tests') {
-            nodejs(nodeJSInstallationName: 'NodeJS') {
-                sh 'yarn install'
-                sh 'yarn test:ci'
-            }
+            docker.build("$imagename:build-$GIT_COMMIT_HASH", "--target test")
         }
 
         def image
