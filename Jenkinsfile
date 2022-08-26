@@ -19,7 +19,7 @@ node {
         }
 
         stage ('Run Tests') {
-            docker.build("--target test .")
+            docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
         }
 
         def image
