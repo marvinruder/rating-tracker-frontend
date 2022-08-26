@@ -39,6 +39,7 @@ node {
         }
 
         stage ('Cleanup') {
+            sh "docker rmi $imagename:build-$GIT_COMMIT_HASH-test || true"
             sh "docker rmi $imagename:build-$GIT_COMMIT_HASH || true"
             if (env.BRANCH_NAME == 'main') {
                 sh "docker rmi $imagename:$main_tag || true"
