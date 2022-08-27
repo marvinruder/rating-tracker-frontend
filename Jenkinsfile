@@ -20,7 +20,7 @@ node {
 
         stage ('Run Tests') {
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                sh "ci_env=`bash <(curl -s https://codecov.io/env)`"
+                ci_env = sh(script: 'bash <(curl -s https://codecov.io/env)', returnStdout: true).trim()
                 docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--build-arg ci_env --target test .")
             }
         }
