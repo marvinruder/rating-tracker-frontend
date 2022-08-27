@@ -1,7 +1,5 @@
 FROM node:lts-alpine as test
 ARG CODECOV_TOKEN
-ARG VCS_SLUG
-ARG VCS_COMMIT_ID
 
 WORKDIR /app
 
@@ -9,6 +7,7 @@ COPY . .
 RUN yarn install
 RUN yarn test:ci
 
+RUN apk add --no-cache git
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
 RUN ./codecov -s coverage -v
@@ -25,9 +24,7 @@ RUN yarn build
 
 FROM alpine:3.16 as run
 
-RUN apk update \
-  && apk add lighttpd \
-  && rm -rf /var/cache/apk/*
+RUN apk add --no-cache lighttpd
 
 COPY --from=build /app/dist /dist
 COPY lighttpd.conf .

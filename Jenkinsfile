@@ -20,7 +20,7 @@ node {
 
         stage ('Run Tests') {
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--build-arg CODECOV_TOKEN --build-arg VCS_COMMIT_ID=$GIT_COMMIT_HASH --build-arg VCS_SLUG=marvinruder/rating-tracker-frontend --target test .")
+                docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--build-arg CODECOV_TOKEN --target test .")
             }
         }
 
