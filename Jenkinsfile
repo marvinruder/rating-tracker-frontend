@@ -19,16 +19,15 @@ node {
         }
 
         stage ('Run Tests') {
-            sh 'mkdir coverage'
+            sh 'mkdir -p coverage'
             def testImage = docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test", ".")
             sh """
             curl -Os https://uploader.codecov.io/latest/alpine/codecov
             chmod +x ./codecov
             """
+            testImage.run("-v ./coverage:/app/coverage")
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                testImage.withRun("-v ./coverage:/app/coverage") {
-                    sh './codecov -s coverage'
-                }
+                sh './codecov -s coverage'
             }
         }
 
