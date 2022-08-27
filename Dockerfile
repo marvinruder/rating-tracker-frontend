@@ -10,7 +10,7 @@ RUN yarn test:ci
 
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN ./codecov
+RUN ./codecov -R /app
 
 FROM node:lts-alpine as build
 ENV NODE_ENV production
