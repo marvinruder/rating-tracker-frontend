@@ -1,6 +1,7 @@
 FROM node:lts-alpine as test
-ARG ci_env
-ENV CI=true
+ARG CODECOV_TOKEN
+ARG VCS_SLUG
+ARG VCS_COMMIT_ID
 
 WORKDIR /app
 
@@ -8,9 +9,11 @@ COPY . .
 RUN yarn install
 RUN yarn test:ci
 
+RUN ls -l /app/.git/
+
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN ./codecov
+RUN ./codecov -R /app
 
 FROM node:lts-alpine as build
 ENV NODE_ENV production
