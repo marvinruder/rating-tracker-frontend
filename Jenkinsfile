@@ -19,23 +19,22 @@ node {
         }
 
         stage ('Run Tests') {
-            sh 'mkdir -p coverage'
-            docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
+            docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "-f Dockerfile-test .")
+            sh """
+            docker run -v "$(pwd)/coverage":/app/coverage -a STDOUT $imagename:build-$GIT_COMMIT_HASH-test
+            curl -Os https://uploader.codecov.io/latest/linux/codecov
+            chmod +x ./codecov
+            ls -la ./coverage
+            """
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                sh """
-                docker run -v coverage:/app/coverage -a STDOUT $imagename:build-$GIT_COMMIT_HASH-test
-                curl -Os https://uploader.codecov.io/latest/linux/codecov
-                chmod +x ./codecov
-                ls -la ./coverage
-                ./codecov -s coverage
-                """
+                sh './codecov -s coverage'
             }
         }
 
         def image
 
         stage ('Build Docker Image') {
-            image = docker.build("$imagename:build-$GIT_COMMIT_HASH", "--target run .")
+            image = docker.build("$imagename:build-$GIT_COMMIT_HASH")
         }
 
         stage ('Publish Docker Image') {

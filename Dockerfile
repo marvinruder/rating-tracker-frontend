@@ -1,12 +1,3 @@
-FROM node:lts-alpine as test
-
-WORKDIR /app
-
-COPY . .
-RUN yarn install
-CMD [ "yarn", "test:ci" ]
-
-
 FROM node:lts-alpine as build
 ENV NODE_ENV production
 
