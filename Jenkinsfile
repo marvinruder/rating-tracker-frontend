@@ -22,7 +22,7 @@ node {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
             sh 'curl -Os https://uploader.codecov.io/latest/alpine/codecov'
             sh 'chmod +x codecov'
-            sh 'docker cp $imagename:build-$GIT_COMMIT_HASH-test:/app/coverage ./coverage'
+            sh 'docker cp $imagename:build-${GIT_COMMIT_HASH}-test:/app/coverage ./coverage'
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
                 sh './codecov -s coverage'
             }
