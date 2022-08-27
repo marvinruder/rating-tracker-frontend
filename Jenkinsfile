@@ -21,6 +21,8 @@ node {
         stage ('Run Tests') {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
             sh '''
+            echo $GIT_COMMIT_HASH
+            echo ${GIT_COMMIT_HASH}
             curl -Os https://uploader.codecov.io/latest/alpine/codecov
             chmod +x ./codecov
             docker cp $imagename:build-$GIT_COMMIT_HASH-test:/app/coverage ./coverage
