@@ -26,7 +26,7 @@ node {
             chmod +x ./codecov
             """
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                testImage.withRun('-v ./coverage:/app/coverage') {
+                testImage.withRun("-v ./coverage:/app/coverage") {
                     sh './codecov -s coverage'
                 }
             }
