@@ -20,8 +20,8 @@ FROM alpine:3.16 as run
 
 RUN apk add --no-cache lighttpd
 
-COPY --from=build /app/dist /dist
 COPY lighttpd.conf .
+COPY --from=build /app/dist /dist
 RUN mkdir /deflate_cache
 
 CMD [ "lighttpd", "-D", "-f", "/lighttpd.conf" ]

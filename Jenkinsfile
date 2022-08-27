@@ -20,7 +20,7 @@ node {
 
         stage ('Run Tests') {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
-            sh 'curl -O codecov -q https://uploader.codecov.io/latest/alpine/codecov'
+            sh 'wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov'
             sh 'chmod +x codecov'
             docker.cp("$imagename:build-$GIT_COMMIT_HASH-test:/app/coverage", "./coverage")
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
