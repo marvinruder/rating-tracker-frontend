@@ -17,7 +17,7 @@ RUN yarn workspaces focus --production
 RUN yarn build
 
 
-FROM alpine:latest as run
+FROM alpine as run
 
 RUN apk update \
   && apk add lighttpd \
