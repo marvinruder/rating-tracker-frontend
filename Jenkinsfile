@@ -20,7 +20,8 @@ node {
 
         stage ('Run Tests') {
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--build-arg CODECOV_TOKEN --target test .")
+                sh 'printenv >> jenkins.env'
+                docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
             }
         }
 

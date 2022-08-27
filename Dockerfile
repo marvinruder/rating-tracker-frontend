@@ -1,5 +1,4 @@
 FROM node:lts-alpine as test
-ARG CODECOV_TOKEN
 
 WORKDIR /app
 
@@ -10,7 +9,8 @@ RUN yarn test:ci
 RUN apk add --no-cache git
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN ./codecov -s coverage -B $(git branch --show-current) -C $(git log -n 1 --pretty=format:'%H')
+RUN export $(cat jenkins.env | xargs)
+RUN ./codecov -s coverage
 
 FROM node:lts-alpine as build
 ENV NODE_ENV production
