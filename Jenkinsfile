@@ -22,7 +22,7 @@ node {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "-f Dockerfile-test .")
             sh """
             id=\$(docker create $imagename:build-$GIT_COMMIT_HASH-test)
-            docker cp \$ic:/app/codecov .
+            docker cp \$id:/app/codecov .
             docker rm -v \$id
             curl -Os https://uploader.codecov.io/latest/linux/codecov
             chmod +x ./codecov
