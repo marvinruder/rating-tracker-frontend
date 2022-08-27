@@ -9,11 +9,9 @@ COPY . .
 RUN yarn install
 RUN yarn test:ci
 
-RUN ls -l /app/.git/
-
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN ./codecov -R /app
+RUN ./codecov -s coverage -v
 
 FROM node:lts-alpine as build
 ENV NODE_ENV production
