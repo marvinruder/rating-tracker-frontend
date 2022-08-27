@@ -2,7 +2,7 @@ node {
     withEnv([
         'imagename=marvinruder/rating-tracker-frontend',
         'main_tag=latest',
-        'branch_tag=SNAPSHOT'
+        'branch_tag=SNAPSHOT',
     ]) {
 
         def GIT_COMMIT_HASH
@@ -19,7 +19,9 @@ node {
         }
 
         stage ('Run Tests') {
-            docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
+            withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
+                docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--build-arg CODECOV_TOKEN --target test .")
+            }
         }
 
         def image
