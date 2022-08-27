@@ -20,9 +20,11 @@ node {
 
         stage ('Run Tests') {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
-            sh 'curl -Os https://uploader.codecov.io/latest/alpine/codecov'
-            sh 'chmod +x codecov'
-            sh 'docker cp $imagename:build-${GIT_COMMIT_HASH}-test:/app/coverage ./coverage'
+            sh '''
+            curl -Os https://uploader.codecov.io/latest/alpine/codecov
+            chmod +x ./codecov
+            docker cp $imagename:build-$GIT_COMMIT_HASH-test:/app/coverage ./coverage
+            '''
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
                 sh './codecov -s coverage'
             }
@@ -45,8 +47,10 @@ node {
         }
 
         stage ('Cleanup') {
-            sh "docker rmi $imagename:build-$GIT_COMMIT_HASH-test || true"
-            sh "docker rmi $imagename:build-$GIT_COMMIT_HASH || true"
+            sh '''
+            docker rmi $imagename:build-$GIT_COMMIT_HASH-test || true
+            docker rmi $imagename:build-$GIT_COMMIT_HASH || true
+            '''
             if (env.BRANCH_NAME == 'main') {
                 sh "docker rmi $imagename:$main_tag || true"
             } else if (!(env.BRANCH_NAME).startsWith('renovate')) {
