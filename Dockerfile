@@ -4,13 +4,16 @@ ARG CODECOV_TOKEN
 WORKDIR /app
 
 COPY . .
-COPY .git/ ./.git
+COPY .git/ /app/.git
 RUN yarn install
 RUN yarn test:ci
 
+RUN echo ${CODECOV_TOKEN}
+RUN ls -l /app/.git/
+
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN ./codecov -t ${CODECOV_TOKEN}
+RUN ./codecov -R /app -t ${CODECOV_TOKEN}
 
 FROM node:lts-alpine as build
 ENV NODE_ENV production
