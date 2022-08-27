@@ -1,5 +1,6 @@
 FROM node:lts-alpine as test
-ARG CODECOV_TOKEN
+ARG ci_env
+ENV CI=true
 
 WORKDIR /app
 
@@ -8,12 +9,9 @@ COPY .git/ /app/.git
 RUN yarn install
 RUN yarn test:ci
 
-RUN echo ${CODECOV_TOKEN}
-RUN ls -l /app/.git/
-
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN ./codecov -R /app -t ${CODECOV_TOKEN}
+RUN ./codecov
 
 FROM node:lts-alpine as build
 ENV NODE_ENV production
