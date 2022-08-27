@@ -8,7 +8,7 @@ COPY . .
 RUN yarn install
 RUN yarn test:ci
 
-RUN curl -Os https://uploader.codecov.io/latest/alpine/codecov
+RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
 RUN ./codecov
 
