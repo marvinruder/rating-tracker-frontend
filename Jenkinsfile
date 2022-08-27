@@ -20,6 +20,7 @@ node {
 
         stage ('Run Tests') {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "--target test .")
+            echo GIT_COMMIT_HASH
             sh '''
             echo $GIT_COMMIT_HASH
             echo ${GIT_COMMIT_HASH}
