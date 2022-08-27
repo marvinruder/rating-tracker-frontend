@@ -4,7 +4,7 @@ ARG CODECOV_TOKEN
 WORKDIR /app
 
 COPY . .
-COPY .git .git
+COPY .git/ ./.git
 RUN yarn install
 RUN yarn test:ci
 
