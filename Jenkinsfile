@@ -24,7 +24,7 @@ node {
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
                 sh """
                 docker run -v coverage:/app/coverage -a STDOUT $imagename:build-$GIT_COMMIT_HASH-test
-                curl -Os https://uploader.codecov.io/latest/alpine/codecov
+                curl -Os https://uploader.codecov.io/latest/linux/codecov
                 chmod +x ./codecov
                 ls -la .
                 ./codecov -s coverage
