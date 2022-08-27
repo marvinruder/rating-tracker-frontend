@@ -26,7 +26,7 @@ node {
                 docker run -v coverage:/app/coverage -a STDOUT $imagename:build-$GIT_COMMIT_HASH-test
                 curl -Os https://uploader.codecov.io/latest/linux/codecov
                 chmod +x ./codecov
-                ls -la .
+                ls -la ./coverage
                 ./codecov -s coverage
                 """
             }
