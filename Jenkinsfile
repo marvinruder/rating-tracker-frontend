@@ -26,10 +26,9 @@ node {
             docker rm -v \$id
             curl -Os https://uploader.codecov.io/latest/linux/codecov
             chmod +x ./codecov
-            ls -la ./coverage
             """
             withCredentials([string(credentialsId: 'codecov-token', variable: 'CODECOV_TOKEN')]) {
-                sh './codecov -s coverage'
+                sh "./codecov -s coverage -C $GIT_COMMIT_HASH"
             }
         }
 
