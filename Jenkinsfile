@@ -21,7 +21,7 @@ node {
         stage ('Run Tests') {
             docker.build("$imagename:build-$GIT_COMMIT_HASH-test", "-f Dockerfile-test .")
             sh """
-            docker run -v "$(pwd)/coverage":/app/coverage -a STDOUT $imagename:build-$GIT_COMMIT_HASH-test
+            docker run -v "\$(pwd)/coverage":/app/coverage -a STDOUT $imagename:build-$GIT_COMMIT_HASH-test
             curl -Os https://uploader.codecov.io/latest/linux/codecov
             chmod +x ./codecov
             ls -la ./coverage
