@@ -5,7 +5,6 @@ ENV CI=true
 WORKDIR /app
 
 COPY . .
-COPY .git/ /app/.git
 RUN yarn install
 RUN yarn test:ci
 
