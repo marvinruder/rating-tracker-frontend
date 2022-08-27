@@ -9,7 +9,7 @@ RUN yarn test:ci
 RUN apk add --no-cache git
 RUN wget -O codecov -q https://uploader.codecov.io/latest/alpine/codecov
 RUN chmod +x codecov
-RUN export $(cat jenkins.env | xargs)
+RUN export $(cat jenkins.env | xargs -d '\n')
 RUN ./codecov -s coverage
 
 FROM node:lts-alpine as build
