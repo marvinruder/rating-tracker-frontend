@@ -22,16 +22,13 @@ import { getRegionFromCountry } from "src/enums/regions/region";
 import { getSuperRegionFromCountry } from "src/enums/regions/superregion";
 import { emojiFlag } from "src/helpers/flags";
 import { getCountryCode } from "src/enums/regions/country";
-import { getSectorFromIndustry, getSectorKey } from "src/enums/sectors/sector";
-import {
-  getSuperSectorFromIndustry,
-  getSuperSectorKey,
-} from "src/enums/sectors/superSector";
+import { getSectorFromIndustry } from "src/enums/sectors/sector";
+import { getSuperSectorFromIndustry } from "src/enums/sectors/superSector";
 import { getGroupFromIndustry } from "src/enums/sectors/industryGroup";
-import IconTypography from "src/components/IconTypography";
 import { Size } from "src/enums/size";
 import { Style } from "src/enums/style";
 import StyleBox from "src/components/StyleBox";
+import SectorIcon from "src/components/SectorIcon";
 
 interface StocksTableProps {
   className?: string;
@@ -106,7 +103,7 @@ const StocksTable: FC<StocksTableProps> = ({ stocks: stocks }) => {
               </TableCell>
               <TableCell>Stock</TableCell>
               <TableCell>Country</TableCell>
-              <TableCell>StyleBox</TableCell>
+              <TableCell sx={{ textAlign: "center" }}>StyleBox</TableCell>
               <TableCell>Sector</TableCell>
               <TableCell>Industry</TableCell>
               <TableCell align="right">Actions</TableCell>
@@ -175,47 +172,68 @@ const StocksTable: FC<StocksTableProps> = ({ stocks: stocks }) => {
                       {getSuperRegionFromCountry(stock.country)}
                     </Typography>
                   </TableCell>
-                  <TableCell>
+                  <TableCell sx={{ textAlign: "center" }}>
                     <Tooltip
                       title={`${Size[stock.size]}-${Style[stock.style]}`}
                     >
-                      <div>
-                        <StyleBox
-                          fill={theme.colors.alpha.black[100]}
-                          stroke={theme.colors.alpha.black[100]}
-                          size={stock.size}
-                          style={stock.style}
-                          length={
-                            2 * (theme.typography.body1.fontSize as number)
-                          }
-                        />
-                      </div>
+                      <StyleBox
+                        fill={theme.colors.alpha.black[100]}
+                        stroke={theme.colors.alpha.black[100]}
+                        size={stock.size}
+                        style={stock.style}
+                        length={
+                          2.25 * (theme.typography.body1.fontSize as number)
+                        }
+                      />
                     </Tooltip>
                   </TableCell>
                   <TableCell>
-                    <IconTypography
-                      variant="body1"
-                      fontWeight="bold"
-                      color="text.primary"
-                      imageUrl={`/static/images/sector/${getSectorKey(
-                        getSectorFromIndustry(stock.industry)
-                      )}.svg`}
-                      maxWidth={125}
-                      noWrap
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
                     >
-                      {getSectorFromIndustry(stock.industry)}
-                    </IconTypography>
-                    <IconTypography
-                      variant="body2"
-                      color="text.secondary"
-                      imageUrl={`/static/images/supersector/${getSuperSectorKey(
-                        getSuperSectorFromIndustry(stock.industry)
-                      )}.svg`}
-                      maxWidth={125}
-                      noWrap
+                      <SectorIcon
+                        industry={stock.industry}
+                        length={
+                          1.75 * (theme.typography.body1.fontSize as number)
+                        }
+                        type={"Sector"}
+                      />
+                      <span style={{ width: 6 }} />
+                      <Typography
+                        variant="body1"
+                        fontWeight="bold"
+                        maxWidth={105}
+                        noWrap
+                      >
+                        {getSectorFromIndustry(stock.industry)}
+                      </Typography>
+                    </span>
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                      }}
                     >
-                      {getSuperSectorFromIndustry(stock.industry)}
-                    </IconTypography>
+                      <SectorIcon
+                        industry={stock.industry}
+                        length={
+                          1.75 * (theme.typography.body2.fontSize as number)
+                        }
+                        type={"SuperSector"}
+                      />
+                      <span style={{ width: 6 }} />
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        maxWidth={105}
+                        noWrap
+                      >
+                        {getSuperSectorFromIndustry(stock.industry)}
+                      </Typography>
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Typography
