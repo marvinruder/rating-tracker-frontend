@@ -20,8 +20,6 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import { Stock } from "src/models/stock";
 import { getRegionFromCountry } from "src/enums/regions/region";
 import { getSuperRegionFromCountry } from "src/enums/regions/superregion";
-import { emojiFlag } from "src/helpers/flags";
-import { getCountryCode } from "src/enums/regions/country";
 import { getSectorFromIndustry } from "src/enums/sectors/sector";
 import { getSuperSectorFromIndustry } from "src/enums/sectors/superSector";
 import { getGroupFromIndustry } from "src/enums/sectors/industryGroup";
@@ -29,6 +27,7 @@ import { Size } from "src/enums/size";
 import { Style } from "src/enums/style";
 import StyleBox from "src/components/StyleBox";
 import SectorIcon from "src/components/SectorIcon";
+import { emojiFlag } from "src/enums/regions/country";
 
 interface StocksTableProps {
   className?: string;
@@ -151,9 +150,7 @@ const StocksTable: FC<StocksTableProps> = ({ stocks: stocks }) => {
                       maxWidth={125}
                       noWrap
                     >
-                      {emojiFlag(getCountryCode(stock.country)) +
-                        " " +
-                        stock.country}
+                      {emojiFlag(stock.country) + " " + stock.country}
                     </Typography>
                     <Typography
                       variant="body2"
@@ -175,16 +172,19 @@ const StocksTable: FC<StocksTableProps> = ({ stocks: stocks }) => {
                   <TableCell sx={{ textAlign: "center" }}>
                     <Tooltip
                       title={`${Size[stock.size]}-${Style[stock.style]}`}
+                      arrow
                     >
-                      <StyleBox
-                        fill={theme.colors.alpha.black[100]}
-                        stroke={theme.colors.alpha.black[100]}
-                        size={stock.size}
-                        style={stock.style}
-                        length={
-                          2.25 * (theme.typography.body1.fontSize as number)
-                        }
-                      />
+                      <div>
+                        <StyleBox
+                          fill={theme.colors.alpha.black[100]}
+                          stroke={theme.colors.alpha.black[100]}
+                          size={stock.size}
+                          style={stock.style}
+                          length={
+                            2.25 * (theme.typography.body1.fontSize as number)
+                          }
+                        />
+                      </div>
                     </Tooltip>
                   </TableCell>
                   <TableCell>
