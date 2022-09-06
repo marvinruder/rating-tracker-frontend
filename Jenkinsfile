@@ -3,6 +3,7 @@ node {
         'imagename=marvinruder/rating-tracker-frontend',
         'main_tag=latest',
         'branch_tag=SNAPSHOT',
+        'FORCE_COLOR=true'
     ]) {
 
         def GIT_COMMIT_HASH
@@ -14,7 +15,7 @@ node {
 
         stage('Create yarn caches') {
             nodejs(nodeJSInstallationName: 'node16') {
-                sh 'yarn install --color=always'
+                sh 'yarn install'
             }
         }
 
