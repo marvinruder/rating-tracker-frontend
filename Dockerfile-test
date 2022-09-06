@@ -3,7 +3,7 @@ FROM node:lts-alpine as test
 WORKDIR /app
 
 COPY . .
-RUN yarn install
-RUN yarn test:ci
+RUN yarn install --color=always
+RUN yarn test:ci --color=always
 
 ENTRYPOINT [ "/bin/sh" ]

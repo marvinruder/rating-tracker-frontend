@@ -4,8 +4,8 @@ ENV NODE_ENV production
 WORKDIR /app
 
 COPY . .
-RUN yarn workspaces focus --production
-RUN yarn build
+RUN yarn workspaces focus --production --color=always
+RUN yarn build --color=always
 
 
 FROM alpine:3.16 as run

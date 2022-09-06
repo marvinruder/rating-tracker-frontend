@@ -14,7 +14,7 @@ node {
 
         stage('Create yarn caches') {
             nodejs(nodeJSInstallationName: 'node16') {
-                sh 'yarn install'
+                sh 'yarn install --color=always'
             }
         }
 
