@@ -1,4 +1,4 @@
-FROM node:current-alpine as build
+FROM node:alpine as build
 ENV NODE_ENV production
 ENV FORCE_COLOR true
 
