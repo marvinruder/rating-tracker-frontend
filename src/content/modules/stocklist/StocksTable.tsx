@@ -18,6 +18,7 @@ import {
   Snackbar,
   Alert,
   Slide,
+  TableSortLabel,
 } from "@mui/material";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
@@ -33,6 +34,7 @@ import StyleBox from "src/components/StyleBox";
 import SectorIcon from "src/components/SectorIcon";
 import { emojiFlag } from "src/enums/regions/country";
 import { baseUrl, stockAPI, stockListEndpoint } from "src/endpoints";
+import { SortableAttribute } from "src/types";
 
 const StocksTable: FC = () => {
   const [page, setPage] = useState<number>(0);
@@ -41,6 +43,8 @@ const StocksTable: FC = () => {
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [stocksFinal, setStocksFinal] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [sortBy, setSortBy] = useState<SortableAttribute>("name");
+  const [sortDesc, setSortDesc] = useState<boolean>(false);
 
   useEffect(() => {
     getStocks();
@@ -48,7 +52,7 @@ const StocksTable: FC = () => {
 
   useEffect(() => {
     getStocks();
-  }, [page, rowsPerPage]);
+  }, [page, rowsPerPage, sortBy, sortDesc]);
 
   const getStocks = () => {
     axios
@@ -56,6 +60,8 @@ const StocksTable: FC = () => {
         params: {
           offset: page * rowsPerPage,
           count: rowsPerPage > 0 ? rowsPerPage : undefined,
+          sortBy: sortBy,
+          sortDesc: sortDesc,
         },
       })
       .then((res) => {
@@ -87,6 +93,15 @@ const StocksTable: FC = () => {
     setRowsPerPage(parseInt(event.target.value));
   };
 
+  const handleSortLabelClicked = (attribute: SortableAttribute) => () => {
+    if (sortBy === attribute) {
+      setSortDesc(!sortDesc);
+    } else {
+      setSortBy(attribute);
+      setSortDesc(attribute === "size");
+    }
+  };
+
   const theme = useTheme();
 
   return (
@@ -95,9 +110,33 @@ const StocksTable: FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Stock</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortBy === "name"}
+                  direction={sortBy === "name" && sortDesc ? "desc" : "asc"}
+                  onClick={handleSortLabelClicked("name")}
+                >
+                  Stock
+                </TableSortLabel>
+              </TableCell>
               <TableCell>Country</TableCell>
-              <TableCell sx={{ textAlign: "center" }}>StyleBox</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortBy === "size"}
+                  direction={sortBy !== "size" || sortDesc ? "desc" : "asc"}
+                  onClick={handleSortLabelClicked("size")}
+                >
+                  Size
+                </TableSortLabel>
+                <br />
+                <TableSortLabel
+                  active={sortBy === "style"}
+                  direction={sortBy === "style" && sortDesc ? "desc" : "asc"}
+                  onClick={handleSortLabelClicked("style")}
+                >
+                  Style
+                </TableSortLabel>
+              </TableCell>
               <TableCell>Sector</TableCell>
               <TableCell>Industry</TableCell>
               <TableCell align="right">Actions</TableCell>
@@ -113,7 +152,7 @@ const StocksTable: FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         color="text.primary"
-                        maxWidth={160}
+                        width={160}
                         noWrap
                       >
                         {stock.name}
@@ -121,7 +160,7 @@ const StocksTable: FC = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        maxWidth={160}
+                        width={160}
                         noWrap
                       >
                         {stock.ticker}
@@ -132,7 +171,7 @@ const StocksTable: FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         color="text.primary"
-                        maxWidth={125}
+                        width={125}
                         noWrap
                       >
                         {emojiFlag(stock.country) + " " + stock.country}
@@ -140,7 +179,7 @@ const StocksTable: FC = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        maxWidth={125}
+                        width={125}
                         noWrap
                       >
                         {getRegionFromCountry(stock.country)}
@@ -148,25 +187,31 @@ const StocksTable: FC = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        maxWidth={125}
+                        width={125}
                         noWrap
                       >
                         {getSuperRegionFromCountry(stock.country)}
                       </Typography>
                     </TableCell>
-                    <TableCell sx={{ textAlign: "center" }}>
+                    <TableCell>
                       <Tooltip
                         title={`${Size[stock.size]}-${Style[stock.style]}`}
                         arrow
                       >
-                        <div>
+                        <div
+                          style={{
+                            width:
+                              2.75 *
+                              (theme.typography.body1.fontSize as number),
+                          }}
+                        >
                           <StyleBox
                             fill={theme.colors.alpha.black[100]}
                             stroke={theme.colors.alpha.black[100]}
                             size={stock.size}
                             style={stock.style}
                             length={
-                              2.25 * (theme.typography.body1.fontSize as number)
+                              2.75 * (theme.typography.body1.fontSize as number)
                             }
                           />
                         </div>
@@ -190,7 +235,7 @@ const StocksTable: FC = () => {
                         <Typography
                           variant="body1"
                           fontWeight="bold"
-                          maxWidth={105}
+                          width={105}
                           noWrap
                         >
                           {getSectorFromIndustry(stock.industry)}
@@ -213,7 +258,7 @@ const StocksTable: FC = () => {
                         <Typography
                           variant="body2"
                           color="text.secondary"
-                          maxWidth={105}
+                          width={105}
                           noWrap
                         >
                           {getSuperSectorFromIndustry(stock.industry)}
@@ -225,7 +270,7 @@ const StocksTable: FC = () => {
                         variant="body1"
                         fontWeight="bold"
                         color="text.primary"
-                        maxWidth={150}
+                        width={150}
                         noWrap
                       >
                         {stock.industry}
@@ -233,7 +278,7 @@ const StocksTable: FC = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        maxWidth={150}
+                        width={150}
                         noWrap
                       >
                         {getGroupFromIndustry(stock.industry)}
@@ -297,6 +342,8 @@ const StocksTable: FC = () => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25, 50, { label: "All", value: -1 }]}
+        showFirstButton
+        showLastButton
       />
       <Snackbar
         open={errorMessage.length > 0}
