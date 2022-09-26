@@ -18,8 +18,7 @@ import {
   Snackbar,
   Alert,
   Slide,
-  TableSortLabel,
-  Dialog,
+  Skeleton,
 } from "@mui/material";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
@@ -35,18 +34,14 @@ import StyleBox from "src/components/StyleBox";
 import SectorIcon from "src/components/SectorIcon";
 import { emojiFlag } from "src/enums/regions/country";
 import { baseUrl, stockAPI, stockListEndpoint } from "src/endpoints";
-import { SortableAttribute } from "src/types";
 
-const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
+const StocksTable: FC = () => {
   const [page, setPage] = useState<number>(0);
   const [count, setCount] = useState<number>(-1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
   const [stocks, setStocks] = useState<Stock[]>([]);
   const [stocksFinal, setStocksFinal] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string>("");
-  const [sortBy, setSortBy] = useState<SortableAttribute>("name");
-  const [sortDesc, setSortDesc] = useState<boolean>(false);
-  const [stockFilterOpen, setStockFilterOpen] = useState<boolean>(false);
 
   useEffect(() => {
     getStocks();
@@ -54,19 +49,15 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
 
   useEffect(() => {
     getStocks();
-  }, [page, rowsPerPage, sortBy, sortDesc, props.filter]);
+  }, [page, rowsPerPage]);
 
   const getStocks = () => {
+    setStocksFinal(false);
     axios
       .get(baseUrl + stockAPI + stockListEndpoint, {
         params: {
           offset: page * rowsPerPage,
           count: rowsPerPage > 0 ? rowsPerPage : undefined,
-          sortBy: sortBy,
-          sortDesc: sortDesc,
-          name: props.filter.name ? props.filter.name : undefined,
-          size: props.filter.size ? props.filter.size : undefined,
-          style: props.filter.style ? props.filter.style : undefined,
         },
       })
       .then((res) => {
@@ -98,15 +89,6 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
     setRowsPerPage(parseInt(event.target.value));
   };
 
-  const handleSortLabelClicked = (attribute: SortableAttribute) => () => {
-    if (sortBy === attribute) {
-      setSortDesc(!sortDesc);
-    } else {
-      setSortBy(attribute);
-      setSortDesc(attribute === "size");
-    }
-  };
-
   const theme = useTheme();
 
   return (
@@ -115,227 +97,259 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === "name"}
-                  direction={sortBy === "name" && sortDesc ? "desc" : "asc"}
-                  onClick={handleSortLabelClicked("name")}
-                >
-                  Stock
-                </TableSortLabel>
-              </TableCell>
+              <TableCell>Stock</TableCell>
               <TableCell>Country</TableCell>
-              <TableCell>
-                <TableSortLabel
-                  active={sortBy === "size"}
-                  direction={sortBy !== "size" || sortDesc ? "desc" : "asc"}
-                  onClick={handleSortLabelClicked("size")}
-                >
-                  Size
-                </TableSortLabel>
-                <br />
-                <TableSortLabel
-                  active={sortBy === "style"}
-                  direction={sortBy === "style" && sortDesc ? "desc" : "asc"}
-                  onClick={handleSortLabelClicked("style")}
-                >
-                  Style
-                </TableSortLabel>
-              </TableCell>
+              <TableCell sx={{ textAlign: "center" }}>StyleBox</TableCell>
               <TableCell>Sector</TableCell>
               <TableCell>Industry</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {stocksFinal ? (
-              stocks.map((stock) => {
-                return (
-                  <TableRow hover key={stock.ticker}>
-                    <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="text.primary"
-                        width={160}
-                        noWrap
-                      >
-                        {stock.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        width={160}
-                        noWrap
-                      >
-                        {stock.ticker}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="text.primary"
-                        width={125}
-                        noWrap
-                      >
-                        {emojiFlag(stock.country) + " " + stock.country}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        width={125}
-                        noWrap
-                      >
-                        {getRegionFromCountry(stock.country)}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        width={125}
-                        noWrap
-                      >
-                        {getSuperRegionFromCountry(stock.country)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      <Tooltip
-                        title={`${Size[stock.size]}-${Style[stock.style]}`}
-                        arrow
-                      >
-                        <div
-                          style={{
-                            width:
-                              2.75 *
-                              (theme.typography.body1.fontSize as number),
-                          }}
-                        >
-                          <StyleBox
-                            fill={theme.colors.alpha.black[100]}
-                            stroke={theme.colors.alpha.black[100]}
-                            size={stock.size}
-                            style={stock.style}
-                            length={
-                              2.75 * (theme.typography.body1.fontSize as number)
-                            }
-                          />
-                        </div>
-                      </Tooltip>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <SectorIcon
-                          industry={stock.industry}
-                          length={
-                            1.75 * (theme.typography.body1.fontSize as number)
-                          }
-                          type={"Sector"}
-                        />
-                        <span style={{ width: 6 }} />
+            {stocksFinal
+              ? stocks.map((stock) => {
+                  return (
+                    <TableRow hover key={stock.ticker}>
+                      <TableCell>
                         <Typography
                           variant="body1"
                           fontWeight="bold"
-                          width={105}
+                          color="text.primary"
+                          maxWidth={160}
                           noWrap
                         >
-                          {getSectorFromIndustry(stock.industry)}
+                          {stock.name}
                         </Typography>
-                      </span>
-                      <span
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <SectorIcon
-                          industry={stock.industry}
-                          length={
-                            1.75 * (theme.typography.body2.fontSize as number)
-                          }
-                          type={"SuperSector"}
-                        />
-                        <span style={{ width: 6 }} />
                         <Typography
                           variant="body2"
                           color="text.secondary"
-                          width={105}
+                          maxWidth={160}
                           noWrap
                         >
-                          {getSuperSectorFromIndustry(stock.industry)}
+                          {stock.ticker}
                         </Typography>
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <Typography
-                        variant="body1"
-                        fontWeight="bold"
-                        color="text.primary"
-                        width={150}
-                        noWrap
-                      >
-                        {stock.industry}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        width={150}
-                        noWrap
-                      >
-                        {getGroupFromIndustry(stock.industry)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell align="right">
-                      <Tooltip title="Edit Order" arrow>
-                        <IconButton
-                          sx={{
-                            "&:hover": {
-                              background: theme.colors.primary.lighter,
-                            },
-                            color: theme.palette.primary.main,
-                          }}
-                          color="inherit"
-                          size="small"
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          color="text.primary"
+                          maxWidth={125}
+                          noWrap
                         >
-                          <EditTwoToneIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Delete Order" arrow>
-                        <IconButton
-                          sx={{
-                            "&:hover": {
-                              background: theme.colors.error.lighter,
-                            },
-                            color: theme.palette.error.main,
-                          }}
-                          color="inherit"
-                          size="small"
+                          {emojiFlag(stock.country) + " " + stock.country}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          maxWidth={125}
+                          noWrap
                         >
-                          <DeleteTwoToneIcon fontSize="small" />
-                        </IconButton>
-                      </Tooltip>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
-            ) : (
-              <TableRow>
-                <TableCell colSpan={99}>
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    minHeight="69px"
-                  >
-                    <CircularProgress />
-                  </Box>
-                </TableCell>
-              </TableRow>
-            )}
+                          {getRegionFromCountry(stock.country)}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          maxWidth={125}
+                          noWrap
+                        >
+                          {getSuperRegionFromCountry(stock.country)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Tooltip
+                          title={`${Size[stock.size]}-${Style[stock.style]}`}
+                          arrow
+                        >
+                          <div>
+                            <StyleBox
+                              fill={theme.colors.alpha.black[100]}
+                              stroke={theme.colors.alpha.black[100]}
+                              size={stock.size}
+                              style={stock.style}
+                              length={
+                                2.25 *
+                                (theme.typography.body1.fontSize as number)
+                              }
+                            />
+                          </div>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <SectorIcon
+                            industry={stock.industry}
+                            length={
+                              1.75 * (theme.typography.body1.fontSize as number)
+                            }
+                            type={"Sector"}
+                          />
+                          <span style={{ width: 6 }} />
+                          <Typography
+                            variant="body1"
+                            fontWeight="bold"
+                            maxWidth={105}
+                            noWrap
+                          >
+                            {getSectorFromIndustry(stock.industry)}
+                          </Typography>
+                        </span>
+                        <span
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                        >
+                          <SectorIcon
+                            industry={stock.industry}
+                            length={
+                              1.75 * (theme.typography.body2.fontSize as number)
+                            }
+                            type={"SuperSector"}
+                          />
+                          <span style={{ width: 6 }} />
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            maxWidth={105}
+                            noWrap
+                          >
+                            {getSuperSectorFromIndustry(stock.industry)}
+                          </Typography>
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          color="text.primary"
+                          maxWidth={150}
+                          noWrap
+                        >
+                          {stock.industry}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          maxWidth={150}
+                          noWrap
+                        >
+                          {getGroupFromIndustry(stock.industry)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Tooltip title="Edit Order" arrow>
+                          <IconButton
+                            sx={{
+                              "&:hover": {
+                                background: theme.colors.primary.lighter,
+                              },
+                              color: theme.palette.primary.main,
+                            }}
+                            color="inherit"
+                            size="small"
+                          >
+                            <EditTwoToneIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete Order" arrow>
+                          <IconButton
+                            sx={{
+                              "&:hover": {
+                                background: theme.colors.error.lighter,
+                              },
+                              color: theme.palette.error.main,
+                            }}
+                            color="inherit"
+                            size="small"
+                          >
+                            <DeleteTwoToneIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              : [...Array(rowsPerPage)].map((undef, key) => {
+                  return (
+                    <TableRow hover key={key}>
+                      <TableCell>
+                        <Typography variant="body1">
+                          <Skeleton width={160} />
+                        </Typography>
+                        <Typography variant="body2">
+                          <Skeleton width={160} />
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body1">
+                          <Skeleton width={125} />
+                        </Typography>
+                        <Typography variant="body2">
+                          <Skeleton width={125} />
+                        </Typography>
+                        <Typography variant="body2">
+                          <Skeleton width={125} />
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Skeleton
+                          variant="rectangular"
+                          width={
+                            2.25 * (theme.typography.body1.fontSize as number)
+                          }
+                          height={
+                            2.25 * (theme.typography.body1.fontSize as number)
+                          }
+                          sx={{ m: "auto" }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body1">
+                          <Skeleton width={132} />
+                        </Typography>
+                        <Typography variant="body2">
+                          <Skeleton width={132} />
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body1">
+                          <Skeleton width={150} />
+                        </Typography>
+                        <Typography variant="body2">
+                          <Skeleton width={150} />
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Skeleton
+                          sx={{ m: "2px", display: "inline-block" }}
+                          variant="circular"
+                          width={
+                            2 * (theme.typography.body1.fontSize as number) - 4
+                          }
+                          height={
+                            2 * (theme.typography.body1.fontSize as number) - 4
+                          }
+                        />
+                        <Skeleton
+                          sx={{ m: "2px", display: "inline-block" }}
+                          variant="circular"
+                          width={
+                            2 * (theme.typography.body1.fontSize as number) - 4
+                          }
+                          height={
+                            2 * (theme.typography.body1.fontSize as number) - 4
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
           </TableBody>
         </Table>
       </TableContainer>
@@ -347,8 +361,6 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25, 50, { label: "All", value: -1 }]}
-        showFirstButton
-        showLastButton
       />
       <Snackbar
         open={errorMessage.length > 0}
@@ -369,15 +381,12 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
   );
 };
 
-export interface StockFilter {
-  name?: string;
-  size?: Size;
-  style?: Style;
-}
+StocksTable.propTypes = {
+  stocks: PropTypes.array.isRequired,
+};
 
-interface StocksTableProps {
-  // stocks?: string[];
-  filter: StockFilter;
-}
+StocksTable.defaultProps = {
+  stocks: [],
+};
 
 export default StocksTable;
