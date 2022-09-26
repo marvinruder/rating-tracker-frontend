@@ -19,6 +19,7 @@ import {
   Alert,
   Slide,
   TableSortLabel,
+  Dialog,
 } from "@mui/material";
 import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
@@ -36,7 +37,7 @@ import { emojiFlag } from "src/enums/regions/country";
 import { baseUrl, stockAPI, stockListEndpoint } from "src/endpoints";
 import { SortableAttribute } from "src/types";
 
-const StocksTable: FC = () => {
+const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
   const [page, setPage] = useState<number>(0);
   const [count, setCount] = useState<number>(-1);
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
@@ -45,6 +46,7 @@ const StocksTable: FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortableAttribute>("name");
   const [sortDesc, setSortDesc] = useState<boolean>(false);
+  const [stockFilterOpen, setStockFilterOpen] = useState<boolean>(false);
 
   useEffect(() => {
     getStocks();
@@ -52,7 +54,7 @@ const StocksTable: FC = () => {
 
   useEffect(() => {
     getStocks();
-  }, [page, rowsPerPage, sortBy, sortDesc]);
+  }, [page, rowsPerPage, sortBy, sortDesc, props.filter]);
 
   const getStocks = () => {
     axios
@@ -62,6 +64,9 @@ const StocksTable: FC = () => {
           count: rowsPerPage > 0 ? rowsPerPage : undefined,
           sortBy: sortBy,
           sortDesc: sortDesc,
+          name: props.filter.name ? props.filter.name : undefined,
+          size: props.filter.size ? props.filter.size : undefined,
+          style: props.filter.style ? props.filter.style : undefined,
         },
       })
       .then((res) => {
@@ -364,12 +369,15 @@ const StocksTable: FC = () => {
   );
 };
 
-StocksTable.propTypes = {
-  stocks: PropTypes.array.isRequired,
-};
+export interface StockFilter {
+  name?: string;
+  size?: Size;
+  style?: Style;
+}
 
-StocksTable.defaultProps = {
-  stocks: [],
-};
+interface StocksTableProps {
+  // stocks?: string[];
+  filter: StockFilter;
+}
 
 export default StocksTable;
