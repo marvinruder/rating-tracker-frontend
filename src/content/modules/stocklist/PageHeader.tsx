@@ -8,6 +8,7 @@ import {
   TextField,
   IconButton,
   useTheme,
+  useMediaQuery,
 } from "@mui/material";
 
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
@@ -20,6 +21,23 @@ import { FC, useState } from "react";
 import { Size } from "src/enums/size";
 import { Style } from "src/enums/style";
 import React from "react";
+import NestedCheckboxList from "src/components/NestedCheckboxList/index";
+import {
+  getRegionsInSuperRegions,
+  SuperRegion,
+} from "src/enums/regions/superregion";
+import { getCountriesInRegion, Region } from "src/enums/regions/region";
+import { Country } from "src/enums/regions/country";
+import {
+  getSectorsInSuperSector,
+  SuperSector,
+} from "src/enums/sectors/superSector";
+import { getIndustryGroupsInSector, Sector } from "src/enums/sectors/sector";
+import { Industry } from "src/enums/sectors/industry";
+import {
+  getIndustriesInGroup,
+  IndustryGroup,
+} from "src/enums/sectors/industryGroup";
 
 const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
@@ -28,6 +46,8 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
     size?: Size;
     style?: Style;
   }>({});
+  const [countryInput, setCountryInput] = useState<Country[]>([]);
+  const [industryInput, setIndustryInput] = useState<Industry[]>([]);
 
   const theme = useTheme();
 
@@ -75,13 +95,18 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
             props.applyFilters();
             setStockNameInput("");
             setStyleboxInput({});
+            setCountryInput([]);
+            setIndustryInput([]);
           }}
         >
           Clear Filters
         </Button>
         <Dialog onClose={() => setFilterOpen(false)} open={filterOpen}>
-          <Grid container>
-            <Grid>
+          <Grid
+            container
+            width={useMediaQuery("(min-width:664px)") ? 600 : 300}
+          >
+            <Grid item width={300}>
               <DialogTitle>Name</DialogTitle>
               <TextField
                 onChange={(event) => {
@@ -89,10 +114,16 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
                 }}
                 value={stockNameInput}
                 placeholder={"e.g. Apple Inc."}
-                sx={{ pl: "24px", pr: "24px" }}
+                sx={{ width: "100%", pl: "24px", pr: "24px" }}
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
-                    props.applyFilters(stockNameInput);
+                    props.applyFilters(
+                      stockNameInput,
+                      styleboxInput.size,
+                      styleboxInput.style,
+                      countryInput,
+                      industryInput
+                    );
                     setFilterOpen(false);
                   }
                 }}
@@ -112,10 +143,7 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
                 }}
               />
             </Grid>
-            <Grid>
-              <DialogTitle>Region</DialogTitle>
-            </Grid>
-            <Grid>
+            <Grid item>
               <DialogTitle>Style</DialogTitle>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <Grid container pl="24px" pr="24px" columns={5} width="298px">
@@ -229,7 +257,35 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
               </div>
             </Grid>
             <Grid item>
+              <DialogTitle>Region</DialogTitle>
+              <NestedCheckboxList<SuperRegion, Region, Country, never>
+                firstLevelElements={[
+                  SuperRegion.Americas,
+                  SuperRegion.EMEA,
+                  SuperRegion.Asia,
+                ]}
+                getSecondLevelElements={getRegionsInSuperRegions}
+                getThirdLevelElements={getCountriesInRegion}
+                height={180}
+                selectedLastLevelElements={countryInput}
+                setSelectedLastLevelElements={setCountryInput}
+              />
+            </Grid>
+            <Grid item>
               <DialogTitle>Industry</DialogTitle>
+              <NestedCheckboxList<SuperSector, Sector, IndustryGroup, Industry>
+                firstLevelElements={[
+                  SuperSector.Cyclical,
+                  SuperSector.Defensive,
+                  SuperSector.Sensitive,
+                ]}
+                getSecondLevelElements={getSectorsInSuperSector}
+                getThirdLevelElements={getIndustryGroupsInSector}
+                getFourthLevelElements={getIndustriesInGroup}
+                height={180}
+                selectedLastLevelElements={industryInput}
+                setSelectedLastLevelElements={setIndustryInput}
+              />
             </Grid>
           </Grid>
           <Button
@@ -237,13 +293,15 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
               props.applyFilters(
                 stockNameInput,
                 styleboxInput.size,
-                styleboxInput.style
+                styleboxInput.style,
+                countryInput,
+                industryInput
               );
               setFilterOpen(false);
             }}
             startIcon={<PublishedWithChangesTwoToneIcon />}
             color="success"
-            sx={{ borderRadius: 0 }}
+            sx={{ borderRadius: 0, mt: 2 }}
           >
             Apply
           </Button>
@@ -254,7 +312,13 @@ const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
 };
 
 interface PageHeaderProps {
-  applyFilters: (name?: string, size?: Size, style?: Style) => void;
+  applyFilters: (
+    name?: string,
+    size?: Size,
+    style?: Style,
+    countries?: Country[],
+    industries?: Industry[]
+  ) => void;
   filtersInUse: boolean;
 }
 

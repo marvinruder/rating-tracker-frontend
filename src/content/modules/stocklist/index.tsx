@@ -7,15 +7,25 @@ import StocksTable, { StockFilter } from "./StocksTable";
 import { useState } from "react";
 import { Size } from "src/enums/size";
 import { Style } from "src/enums/style";
+import { Country } from "src/enums/regions/country";
+import { Industry } from "src/enums/sectors/industry";
 
 function StocklistModule() {
   const [filter, setFilter] = useState<StockFilter>({});
 
-  const applyFilters = (name?: string, size?: Size, style?: Style) => {
+  const applyFilters = (
+    name?: string,
+    size?: Size,
+    style?: Style,
+    countries?: Country[],
+    industries?: Industry[]
+  ) => {
     setFilter({
       name: name ? name : "",
       size: size,
       style: style,
+      countries: countries,
+      industries: industries,
     });
   };
 
@@ -24,7 +34,13 @@ function StocklistModule() {
       <PageTitleWrapper>
         <PageHeader
           applyFilters={applyFilters}
-          filtersInUse={!!filter.name || !!filter.size || !!filter.style}
+          filtersInUse={
+            !!filter.name ||
+            !!filter.size ||
+            !!filter.style ||
+            (!!filter.countries && filter.countries.length > 0) ||
+            (!!filter.industries && filter.industries.length > 0)
+          }
         />
       </PageTitleWrapper>
       <Container maxWidth="lg">
