@@ -18,8 +18,8 @@ import {
   TableSortLabel,
   Skeleton,
 } from "@mui/material";
-// import EditTwoToneIcon from "@mui/icons-material/EditTwoTone";
-// import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+// import EditIcon from "@mui/icons-material/Edit";
+// import DeleteIcon from "@mui/icons-material/Delete";
 import { Stock } from "src/models/stock";
 import StyleBox from "src/components/StyleBox";
 import SectorIcon from "src/components/SectorIcon";
@@ -55,10 +55,6 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortableAttribute>("name");
   const [sortDesc, setSortDesc] = useState<boolean>(false);
-
-  useEffect(() => {
-    getStocks();
-  }, []);
 
   useEffect(() => {
     getStocks();
@@ -407,7 +403,7 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
                             color="inherit"
                             size="small"
                           >
-                            <EditTwoToneIcon fontSize="small" />
+                            <EditIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                         <Tooltip title="Delete Order" arrow>
@@ -421,7 +417,7 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
                             color="inherit"
                             size="small"
                           >
-                            <DeleteTwoToneIcon fontSize="small" />
+                            <DeleteIcon fontSize="small" />
                           </IconButton>
                         </Tooltip>
                       </TableCell> */}

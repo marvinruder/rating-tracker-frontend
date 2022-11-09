@@ -5,6 +5,7 @@ import { RouteObject } from "react-router";
 import SidebarLayout from "src/layouts/SidebarLayout";
 
 import SuspenseLoader from "src/components/SuspenseLoader";
+import LoginApp from "src/content/applications/Users/login/index";
 
 // eslint-disable-next-line react/display-name
 const loader = (Component) => (props) =>
@@ -49,28 +50,32 @@ const routes: RouteObject[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    path: "login",
+    element: <LoginApp />,
+  },
+  {
+    path: "status",
+    children: [
       {
-        path: "status",
-        children: [
-          {
-            path: "",
-            element: <Navigate to="404" replace />,
-          },
-          {
-            path: "404",
-            element: <Status404 />,
-          },
-          {
-            path: "500",
-            element: <Status500 />,
-          },
-        ],
+        path: "",
+        element: <Navigate to="404" replace />,
       },
       {
-        path: "*",
+        path: "404",
         element: <Status404 />,
       },
+      {
+        path: "500",
+        element: <Status500 />,
+      },
     ],
+  },
+  {
+    path: "*",
+    element: <Status404 />,
   },
 ];
 
