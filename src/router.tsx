@@ -5,7 +5,7 @@ import { RouteObject } from "react-router";
 import SidebarLayout from "src/layouts/SidebarLayout";
 
 import SuspenseLoader from "src/components/SuspenseLoader";
-import LoginApp from "src/content/applications/Users/login/index";
+import LoginApp from "src/content/applications/Users/login";
 
 // eslint-disable-next-line react/display-name
 const loader = (Component) => (props) =>

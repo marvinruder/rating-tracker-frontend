@@ -3,7 +3,7 @@ import router from "src/router";
 
 import { CssBaseline } from "@mui/material";
 import ThemeProvider from "./theme/ThemeProvider";
-import ParticleBackground from "./components/ParticleBackground/index.js";
+import ParticleBackground from "./components/ParticleBackground";
 
 function App() {
   const content = useRoutes(router);

@@ -14,32 +14,27 @@ import {
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
 import { useEffect, useState } from "react";
-import SwitchSelector from "react-switch-selector";
-import "./switchSelector.css";
 import * as SimpleWebAuthnBrowser from "@simplewebauthn/browser";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import {
   authAPI,
   baseUrl,
   registerEndpoint,
   signInEndpoint,
 } from "src/endpoints";
+import SwitchSelector from "src/components/SwitchSelector";
+import NotificationSnackbar, {
+  Notification,
+} from "src/components/NotificationSnackbar";
 
 const LoginApp = () => {
   const theme = useTheme();
-  const [action, setAction] = useState<"signIn" | "register">("signIn");
+  const [action, setAction] = useState<string>("signIn");
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [emailError, setEmailError] = useState<boolean>(false);
   const [nameError, setNameError] = useState<boolean>(false);
-  const [status, setStatus] = useState<{
-    severity: "error" | "info" | "success" | "warning";
-    title: string;
-    message: string;
-  }>(undefined);
-  const [snackbarShown, setSnackbarShown] = useState<boolean>(false);
-
-  useEffect(() => setSnackbarShown(status != undefined), [status]);
+  const [notification, setNotification] = useState<Notification>(undefined);
 
   const validateEmail = () => {
     return (
@@ -60,164 +55,78 @@ const LoginApp = () => {
     }
   };
 
-  const onButtonClick = () => {
+  const reportError = (err: AxiosError<any>, task: string) =>
+    setNotification({
+      severity: "error",
+      title: `Error while ${task}`,
+      message:
+        err.response?.data?.message ??
+        err.message ??
+        "No additional information available.",
+    });
+
+  const onButtonClick = async () => {
     switch (action) {
       case "register":
         if (validateEmail() && validateName()) {
-          axios
-            .get(baseUrl + authAPI + registerEndpoint, {
-              params: {
-                email,
-                name,
-              },
-            })
-            .then((res) =>
-              SimpleWebAuthnBrowser.startRegistration(res.data).then(
-                (authRes) =>
-                  axios
-                    .post(baseUrl + authAPI + registerEndpoint, authRes, {
-                      params: {
-                        email,
-                        name,
-                      },
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                    })
-                    .then(() =>
-                      setStatus({
-                        severity: "success",
-                        title: "Welcome!",
-                        message:
-                          "Your registration was successful. Please note that a manual activation of your account may still be necessary before you can access the page.",
-                      })
-                    )
-                    .catch((err) =>
-                      setStatus({
-                        severity: "error",
-                        title: "Error while processing registration response",
-                        message:
-                          err.response?.data?.message ??
-                          err.message ??
-                          "No additional information available.",
-                      })
-                    )
-              )
-            )
-            .catch((err) =>
-              setStatus({
-                severity: "error",
-                title: "Error while requesting registration challenge",
-                message:
-                  err.response?.data?.message ??
-                  err.message ??
-                  "No additional information available.",
-              })
+          try {
+            const res = await axios.get(baseUrl + authAPI + registerEndpoint, {
+              params: { email, name },
+            });
+            const authRes = await SimpleWebAuthnBrowser.startRegistration(
+              res.data
             );
+            try {
+              await axios.post(baseUrl + authAPI + registerEndpoint, authRes, {
+                params: { email, name },
+                headers: { "Content-Type": "application/json" },
+              });
+              setNotification({
+                severity: "success",
+                title: "Welcome!",
+                message:
+                  "Your registration was successful. Please note that a manual activation of your account may still be necessary before you can access the page.",
+              });
+            } catch (err) {
+              reportError(err, "processing registration response");
+            }
+          } catch (err) {
+            reportError(err, "requesting registration challenge");
+          }
         }
         break;
       case "signIn":
-        axios
-          .get(baseUrl + authAPI + signInEndpoint)
-          .then((res) =>
-            SimpleWebAuthnBrowser.startAuthentication(res.data).then(
-              (authRes) =>
-                axios
-                  .post(
-                    baseUrl + authAPI + signInEndpoint,
-                    { ...authRes, challenge: res.data.challenge },
-                    {
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                    }
-                  )
-                  .then(() =>
-                    setStatus({
-                      severity: "success",
-                      title: "Welcome back!",
-                      message: "Authentication successful",
-                    })
-                  )
-                  .catch((err) =>
-                    setStatus({
-                      severity: "error",
-                      title: "Error while processing authorization response",
-                      message:
-                        err.response?.data?.message ??
-                        err.message ??
-                        "No additional information available.",
-                    })
-                  )
-            )
-          )
-          .catch((err) =>
-            setStatus({
-              severity: "error",
-              title: "Error while requesting authentication challenge",
-              message:
-                err.response?.data?.message ??
-                err.message ??
-                "No additional information available.",
-            })
+        try {
+          const res = await axios.get(baseUrl + authAPI + signInEndpoint);
+          const authRes = await SimpleWebAuthnBrowser.startAuthentication(
+            res.data
           );
+          try {
+            await axios.post(
+              baseUrl + authAPI + signInEndpoint,
+              { ...authRes, challenge: res.data.challenge },
+              { headers: { "Content-Type": "application/json" } }
+            );
+            setNotification({
+              severity: "success",
+              title: "Welcome back!",
+              message: "Authentication successful",
+            });
+          } catch (err) {
+            reportError(err, "processing authorization response");
+          }
+        } catch (err) {
+          reportError(err, "requesting authentication challenge");
+        }
+        break;
+      default:
         break;
     }
   };
 
-  const switchOptions = [
-    {
-      label: (
-        <Typography
-          padding={0.5}
-          variant="button"
-          color={
-            action === "signIn"
-              ? theme.colors.switchSelector.selected
-              : theme.colors.switchSelector.unselected
-          }
-        >
-          Sign in
-        </Typography>
-      ),
-      value: "signIn",
-    },
-    {
-      label: (
-        <Typography
-          padding={0.5}
-          variant="button"
-          color={
-            action === "register"
-              ? theme.colors.switchSelector.selected
-              : theme.colors.switchSelector.unselected
-          }
-        >
-          Register
-        </Typography>
-      ),
-      value: "register",
-    },
-  ];
-
   return (
     <>
-      <Snackbar
-        open={snackbarShown}
-        autoHideDuration={10000}
-        onClose={() => setSnackbarShown(false)}
-      >
-        <Alert
-          onClose={() => setSnackbarShown(false)}
-          severity={status?.severity ?? "info"}
-          sx={{ maxWidth: "450px" }}
-        >
-          <AlertTitle>
-            <strong>{status?.title}</strong>
-          </AlertTitle>
-          {status?.message}
-        </Alert>
-      </Snackbar>
+      <NotificationSnackbar notification={notification} />
       <Card sx={{ margin: "auto", minWidth: 275 }}>
         <CardContent>
           <Grid container direction={"column"} spacing={2} padding={1}>
@@ -240,10 +149,12 @@ const LoginApp = () => {
             </Grid>
             <Grid item>
               <SwitchSelector
-                options={switchOptions}
-                backgroundColor={theme.palette.primary.main}
-                selectedBackgroundColor={theme.colors.alpha.white[100]}
-                onChange={setAction}
+                value={action}
+                setValue={setAction}
+                leftValue="signIn"
+                leftLabel="Sign in"
+                rightValue="register"
+                rightLabel="Register"
               />
             </Grid>
             <Grid container item direction={"column"} spacing={1}>

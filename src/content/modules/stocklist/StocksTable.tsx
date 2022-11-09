@@ -26,25 +26,22 @@ import SectorIcon from "src/components/SectorIcon";
 import { countryNameWithFlag } from "src/taxonomy/regions/country";
 import { baseUrl, stockAPI, stockListEndpoint } from "src/endpoints";
 import { Country, Industry, Size, SortableAttribute, Style } from "src/types";
-import StarRating from "src/components/StarRating/index";
-import { regionName, regionOfCountry } from "src/taxonomy/regions/region.js";
+import StarRating from "src/components/StarRating";
+import { regionName, regionOfCountry } from "src/taxonomy/regions/region";
 import {
   superRegionName,
   superRegionOfRegion,
-} from "src/taxonomy/regions/superregion.js";
-import {
-  sectorName,
-  sectorOfIndustryGroup,
-} from "src/taxonomy/sectors/sector.js";
+} from "src/taxonomy/regions/superregion";
+import { sectorName, sectorOfIndustryGroup } from "src/taxonomy/sectors/sector";
 import {
   groupOfIndustry,
   industryGroupName,
-} from "src/taxonomy/sectors/industryGroup.js";
+} from "src/taxonomy/sectors/industryGroup";
 import {
   superSectorName,
   superSectorOfSector,
-} from "src/taxonomy/sectors/superSector.js";
-import { industryName } from "src/taxonomy/sectors/industry.js";
+} from "src/taxonomy/sectors/superSector";
+import { industryName } from "src/taxonomy/sectors/industry";
 
 const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
   const [page, setPage] = useState<number>(0);

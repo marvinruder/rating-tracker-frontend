@@ -34,7 +34,7 @@ import {
   superSectorArray,
 } from "src/types";
 import React from "react";
-import NestedCheckboxList from "src/components/NestedCheckboxList/index";
+import NestedCheckboxList from "src/components/NestedCheckboxList";
 import {
   getRegionsInSuperRegion,
   superRegionName,
@@ -52,8 +52,8 @@ import {
   getSectorsInSuperSector,
   superSectorName,
 } from "src/taxonomy/sectors/superSector";
-import { countryNameWithFlag } from "src/taxonomy/regions/country.js";
-import { industryName } from "src/taxonomy/sectors/industry.js";
+import { countryNameWithFlag } from "src/taxonomy/regions/country";
+import { industryName } from "src/taxonomy/sectors/industry";
 
 const PageHeader: FC<PageHeaderProps> = (props: PageHeaderProps) => {
   const [filterOpen, setFilterOpen] = useState<boolean>(false);
