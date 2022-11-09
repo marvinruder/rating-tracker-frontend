@@ -1,19 +1,16 @@
 import {
-  Alert,
-  AlertTitle,
   Avatar,
   Button,
   Card,
   CardContent,
   Grid,
-  Snackbar,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import FingerprintIcon from "@mui/icons-material/Fingerprint";
 import QueryStatsIcon from "@mui/icons-material/QueryStats";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as SimpleWebAuthnBrowser from "@simplewebauthn/browser";
 import axios, { AxiosError } from "axios";
 import {

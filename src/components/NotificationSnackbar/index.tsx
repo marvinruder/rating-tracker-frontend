@@ -1,4 +1,12 @@
-import { Alert, AlertColor, AlertTitle, Snackbar } from "@mui/material";
+import {
+  Alert,
+  AlertColor,
+  AlertProps,
+  AlertTitle,
+  Slide,
+  Snackbar,
+  SnackbarProps,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 
 const NotificationSnackbar = (props: NotificationSnackbarProps) => {
@@ -10,11 +18,14 @@ const NotificationSnackbar = (props: NotificationSnackbarProps) => {
 
   return (
     <Snackbar
+      {...props.snackbarProps}
       open={snackbarShown}
       autoHideDuration={10000}
       onClose={() => setSnackbarShown(false)}
+      TransitionComponent={(props) => <Slide {...props} direction="up" />}
     >
       <Alert
+        {...props.alertProps}
         onClose={() => setSnackbarShown(false)}
         severity={props.notification?.severity ?? "info"}
         sx={{ maxWidth: "450px" }}
@@ -36,6 +47,8 @@ export interface Notification {
 
 interface NotificationSnackbarProps {
   notification: Notification;
+  snackbarProps?: Partial<SnackbarProps>;
+  alertProps?: Partial<AlertProps>;
 }
 
 export default NotificationSnackbar;

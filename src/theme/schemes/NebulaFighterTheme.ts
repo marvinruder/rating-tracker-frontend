@@ -46,7 +46,7 @@ const colors = {
     card: "0px 0px 2px #828282",
     cardSm: "0px 0px 2px #828282",
     cardLg:
-      "0 0rem 14rem 0 rgb(255 255 255 / 20%), 0 0.8rem 2.3rem rgb(133 133 133 / 3%), 0 0.2rem 0.7rem rgb(38 38 38 / 15%)",
+      "0 0rem 14rem 0 rgb(255 255 255 / 10%), 0 0.8rem 2.3rem rgb(133 133 133 / 3%), 0 0.2rem 0.7rem rgb(38 38 38 / 15%)",
   },
   layout: {
     general: {
