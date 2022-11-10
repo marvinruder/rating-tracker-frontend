@@ -66,11 +66,9 @@ const StocksTable: FC<StocksTableProps> = (props: StocksTableProps) => {
           severity: "error",
           title: "Error while fetching stock information",
           message:
-            e.response.status &&
-            e.response.statusText &&
-            e.response.data.message
-              ? `${e.response?.status} ${e.response?.statusText}: ${e.response?.data?.message}`
-              : "No additional information available.",
+            e.response?.status && e.response?.data?.message
+              ? `${e.response.status}: ${e.response.data.message}`
+              : e.message ?? "No additional information available.",
         });
         setCount(0);
       })

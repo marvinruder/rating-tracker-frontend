@@ -57,9 +57,9 @@ const LoginApp = () => {
       severity: "error",
       title: `Error while ${task}`,
       message:
-        err.response?.data?.message ??
-        err.message ??
-        "No additional information available.",
+        err.response?.status && err.response?.data?.message
+          ? `${err.response.status}: ${err.response.data.message}`
+          : err.message ?? "No additional information available.",
     });
 
   const onButtonClick = async () => {
