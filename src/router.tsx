@@ -2,12 +2,11 @@ import React, { Suspense, lazy, useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { RouteObject } from "react-router";
 
-import SidebarLayout from "src/layouts/SidebarLayout";
+import SidebarLayout from "./layouts/SidebarLayout";
 
-import SuspenseLoader from "src/components/SuspenseLoader";
+import SuspenseLoader from "./components/SuspenseLoader";
 import axios from "axios";
 import { baseUrl, sessionAPI } from "./endpoints";
-import LoadingPage from "./content/pages/Loading";
 
 // eslint-disable-next-line react/display-name
 const loader = (Component) => (props) =>
@@ -26,8 +25,6 @@ const LoginApp = loader(
 // Modules
 
 const Stocklist = loader(lazy(() => import("src/content/modules/stocklist")));
-
-// Status
 
 const Status404 = loader(
   lazy(() => import("src/content/pages/Status/Status404"))
@@ -60,7 +57,7 @@ const AuthWrapper = ({ children }: { children: JSX.Element }) => {
       <Navigate to="/login" replace />
     )
   ) : (
-    <LoadingPage />
+    <SuspenseLoader />
   );
 };
 
