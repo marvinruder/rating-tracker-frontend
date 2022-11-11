@@ -23,9 +23,11 @@ import SwitchSelector from "src/components/SwitchSelector";
 import NotificationSnackbar, {
   Notification,
 } from "src/components/NotificationSnackbar";
+import { useNavigate } from "react-router";
 
 const LoginApp = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [action, setAction] = useState<string>("signIn");
   const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
@@ -109,6 +111,7 @@ const LoginApp = () => {
               title: "Welcome back!",
               message: "Authentication successful",
             });
+            setTimeout(() => navigate("/"), 1000);
           } catch (err) {
             reportError(err, "processing authorization response");
           }

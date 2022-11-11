@@ -1,11 +1,13 @@
-import { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { RouteObject } from "react-router";
 
 import SidebarLayout from "src/layouts/SidebarLayout";
 
 import SuspenseLoader from "src/components/SuspenseLoader";
-import LoginApp from "src/content/applications/Users/login";
+import axios from "axios";
+import { baseUrl, sessionAPI } from "./endpoints";
+import LoadingPage from "./content/pages/Loading";
 
 // eslint-disable-next-line react/display-name
 const loader = (Component) => (props) =>
@@ -17,6 +19,12 @@ const loader = (Component) => (props) =>
 
 // Applications
 
+const LoginApp = loader(
+  lazy(() => import("src/content/applications/Users/login"))
+);
+
+// Modules
+
 const Stocklist = loader(lazy(() => import("src/content/modules/stocklist")));
 
 // Status
@@ -27,6 +35,34 @@ const Status404 = loader(
 const Status500 = loader(
   lazy(() => import("src/content/pages/Status/Status500"))
 );
+
+const AuthWrapper = ({ children }: { children: JSX.Element }) => {
+  const [done, setDone] = useState<boolean>(false);
+  const [authed, setAuthed] = useState<boolean>(false);
+  useEffect(() => {
+    const getAuthed = async () => {
+      setAuthed(
+        await axios
+          .head(baseUrl + sessionAPI)
+          .then((res) => res.status == 204)
+          .catch(() => false)
+          .finally(() => setDone(true))
+      );
+    };
+
+    getAuthed();
+  }, []);
+
+  return done ? (
+    authed ? (
+      children
+    ) : (
+      <Navigate to="/login" replace />
+    )
+  ) : (
+    <LoadingPage />
+  );
+};
 
 const routes: RouteObject[] = [
   {
@@ -46,7 +82,11 @@ const routes: RouteObject[] = [
         children: [
           {
             path: "stocklist",
-            element: <Stocklist />,
+            element: (
+              <AuthWrapper>
+                <Stocklist />
+              </AuthWrapper>
+            ),
           },
         ],
       },
